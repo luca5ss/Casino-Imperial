@@ -39,7 +39,7 @@
       </div>
       <div class="casino-grid">
         <section class="game-panel slots-panel">
-          <div class="panel-heading"><span class="ornament">✦</span><div><h2>Mechanické automaty</h2><p>Staré dobré štěstí v každém roztočení</p></div></div>
+          <div class="panel-heading"><span class="ornament">✦</span><div><h2>Mechanické automaty</h2><p>Staré dobré štěstí v každém roztočení</p></div><button class="focus-toggle" data-focus-game title="Zaměřit hru" aria-label="Zaměřit hru">⤢</button></div>
           <div class="slot-selector"><button class="slot-choice selected" data-slot="imperial">IMPERIAL</button><button class="slot-choice" data-slot="royal">ROYAL</button></div>
           <div class="slot-machine" id="slot-machine">
             <div class="machine-top"><span>✧ IMPERIAL ✧</span><small>VÝHERNÍ LINIE</small></div>
@@ -55,7 +55,7 @@
           <p class="game-note">Divoký symbol <b>★</b> nahrazuje ostatní; rozptyl <b>♜</b> spouští bonus.</p>
         </section>
         <section class="game-panel roulette-panel">
-          <div class="panel-heading"><span class="ornament">✦</span><div><h2>Evropská ruleta</h2><p>Jeden zelený nula-kruh. Klasická pravidla.</p></div></div>
+          <div class="panel-heading"><span class="ornament">✦</span><div><h2>Evropská ruleta</h2><p>Jeden zelený nula-kruh. Klasická pravidla.</p></div><button class="focus-toggle" data-focus-game title="Zaměřit hru" aria-label="Zaměřit hru">⤢</button></div>
           <div class="wheel-stage">
             <canvas id="roulette-wheel" width="360" height="360" aria-label="Kolo evropské rulety"></canvas>
             <div class="wheel-center">CI</div>
@@ -71,7 +71,7 @@
           <div class="roulette-controls"><span>Žeton: <b id="selected-chip">10</b> kr.</span><button class="green-button" data-action="rouletteSpin">ROZTOČIT KOLO</button><button class="text-button" data-action="rouletteClear">Zrušit sázky</button></div>
         </section>
         <section class="game-panel blackjack-panel">
-          <div class="panel-heading"><span class="ornament">✦</span><div><h2>Blackjack</h2><p>Krupiér stojí na měkkých 17 • šest balíčků</p></div></div>
+          <div class="panel-heading"><span class="ornament">✦</span><div><h2>Blackjack</h2><p>Krupiér stojí na měkkých 17 • šest balíčků</p></div><button class="focus-toggle" data-focus-game title="Zaměřit hru" aria-label="Zaměřit hru">⤢</button></div>
           <div class="blackjack-felt">
             <div class="hand-area dealer-area"><span class="hand-label">KRUPIÉR <b id="dealer-score">—</b></span><div id="dealer-hand" class="cards"></div></div>
             <div class="table-inscription">CASINO IMPERIAL</div>
@@ -121,6 +121,7 @@
       <div class="city-bottom"><span>⌂ Každý majetek pracuje pro vás. Investujte chytře.</span><button class="text-button" data-action="vehicle">Garáž a vozidla →</button><button class="text-button" data-action="business">Podniky →</button></div>
     </section>
   </main>
+  <div id="focus-scrim" class="focus-scrim hidden"></div>
   <div id="modal-root" class="modal-root" aria-live="polite"></div>
   <div id="toast-region" class="toast-region" aria-live="polite"></div>
   <input id="import-file" type="file" accept="application/json,.json" hidden>

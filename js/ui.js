@@ -36,6 +36,9 @@
     CI.$$('.icon-button').forEach(b=>b.addEventListener('click',()=>({missions:CI.missionsModal,statistics:CI.statisticsModal,settings:CI.settingsModal}[b.dataset.action]||(()=>{}))()));
     CI.$('[data-action="save"]').addEventListener('click',CI.save);CI.$('[data-action="responsible"]').addEventListener('click',CI.responsibleModal);
     CI.$('#import-file').addEventListener('change',e=>{if(e.target.files&&e.target.files[0])CI.importSave(e.target.files[0]);e.target.value='';});
+    CI.$$('.focus-toggle').forEach(button=>button.addEventListener('click',()=>{const panel=button.closest('.game-panel'),focused=panel.classList.toggle('focused-panel');document.body.classList.toggle('focus-mode',focused);CI.$('#focus-scrim').classList.toggle('hidden',!focused);button.textContent=focused?'×':'⤢';button.title=focused?'Zavřít zvětšenou hru':'Zaměřit hru';button.setAttribute('aria-label',button.title);}));
+    CI.$('#focus-scrim').addEventListener('click',()=>CI.$('.focused-panel .focus-toggle')?.click());
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')CI.$('.focused-panel .focus-toggle')?.click();});
     document.addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b)return;const key=b.dataset.step,limits={slotBet:[10,500],slotLines:[10,20],blackjackBet:[10,1000]},[min,max]=limits[key];CI.state[key]=CI.checkedInteger(CI.state[key]+Number(b.dataset.delta),min,max);CI.$('#slot-lines').textContent=CI.state.slotLines;CI.render();});
   };
   CI.renderRivals=()=>{CI.$$('.rival-marker').forEach(e=>e.remove());(CI.state.rivals||[]).forEach((p,i)=>{const m=document.createElement('div');m.className='rival-marker';m.title=p.name+' • '+p.property+' • '+p.vehicle;m.textContent='♟';m.style.cssText=`position:absolute;z-index:5;left:${15+i*13}% ;top:${32+(i%3)*8}%;color:#e9d18d;font-size:21px;text-shadow:0 2px 3px #000`;CI.$('#city-map').append(m);});};
