@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14251b">
+  <meta name="description" content="Casino Imperial — klasické kasino a město plné příležitostí.">
+  <title>Casino Imperial</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/casino.css">
+  <link rel="stylesheet" href="css/city.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <div class="dust" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Casino Imperial — úvod">
+      <span class="brand-mark">♛</span><span><strong>CASINO IMPERIAL</strong><small>POCTIVÁ HRA • VELKÉ AMBICE</small></span>
+    </a>
+    <nav class="world-nav" aria-label="Hlavní nabídka">
+      <button class="world-button active" data-world="casino">♠ Kasino</button>
+      <button class="world-button" data-world="city">⌂ Město</button>
+    </nav>
+    <div class="player-strip">
+      <span class="credit-readout"><small>Kredity</small> ◉ <b id="credits">1 000</b> kr.</span>
+      <span class="vip-readout"><i id="vip-level">BRONZ</i><small>VIP</small></span>
+      <span class="prestige-readout"><small>Prestiž</small> ✦ <b id="prestige">0</b></span>
+      <button class="icon-button" data-action="missions" title="Mise">⚑</button>
+      <button class="icon-button" data-action="statistics" title="Statistiky">▤</button>
+      <button class="icon-button" data-action="settings" title="Nastavení">⚙</button>
+      <button class="gold-button save-button" data-action="save">Uložit</button>
+    </div>
+  </header>
+  <main>
+    <section id="casino-world" class="world casino-world">
+      <div class="section-heading">
+        <div><p class="eyebrow">SALON OTEVŘEN • <span id="clock-label">VEČERNÍ SMĚNA</span></p><h1>Herní sál</h1></div>
+        <div class="heading-actions"><span class="session-pill">Stůl č. 7</span><button class="wood-button" data-action="responsible">♧ Zodpovědná hra</button></div>
+      </div>
+      <div class="casino-grid">
+        <section class="game-panel slots-panel">
+          <div class="panel-heading"><span class="ornament">✦</span><div><h2>Mechanické automaty</h2><p>Staré dobré štěstí v každém roztočení</p></div></div>
+          <div class="slot-selector"><button class="slot-choice selected" data-slot="imperial">IMPERIAL</button><button class="slot-choice" data-slot="royal">ROYAL</button></div>
+          <div class="slot-machine" id="slot-machine">
+            <div class="machine-top"><span>✧ IMPERIAL ✧</span><small>VÝHERNÍ LINIE</small></div>
+            <div class="reels" id="reels" aria-label="Pět válců automatu"></div>
+            <div class="payline" id="payline">◆ 10 AKTIVNÍCH LINIÍ ◆</div>
+            <div class="machine-controls">
+              <label>SÁZKA <div class="stepper"><button data-step="slotBet" data-delta="-10">−</button><b id="slot-bet">10</b><button data-step="slotBet" data-delta="10">+</button></div></label>
+              <label>LINIE <div class="stepper"><button data-step="slotLines" data-delta="-1">−</button><b id="slot-lines">10</b><button data-step="slotLines" data-delta="1">+</button></div></label>
+              <button class="red-button pull-button" data-action="spin">ZATÁHNOUT</button>
+            </div>
+            <div class="machine-lower"><button class="text-button" data-action="autoplay">▶ Automatická hra: <b id="autoplay-label">vypnuta</b></button><span id="slot-message" aria-live="polite">Vložte sázku a zkuste štěstí.</span></div>
+          </div>
+          <p class="game-note">Divoký symbol <b>★</b> nahrazuje ostatní; rozptyl <b>♜</b> spouští bonus.</p>
+        </section>
+        <section class="game-panel roulette-panel">
+          <div class="panel-heading"><span class="ornament">✦</span><div><h2>Evropská ruleta</h2><p>Jeden zelený nula-kruh. Klasická pravidla.</p></div></div>
+          <div class="wheel-stage">
+            <canvas id="roulette-wheel" width="360" height="360" aria-label="Kolo evropské rulety"></canvas>
+            <div class="wheel-center">CI</div>
+          </div>
+          <div class="roulette-result" id="roulette-result">Vyberte žeton a své šťastné číslo.</div>
+          <div class="roulette-board" id="roulette-board" aria-label="Sázková tabulka rulety"></div>
+          <div class="outside-bets" id="outside-bets" aria-label="Vnější sázky na ruletě">
+            <button data-bet-type="low">1–18</button><button data-bet-type="even">SUDÁ</button><button data-bet-type="red">ČERVENÁ</button><button data-bet-type="black">ČERNÁ</button><button data-bet-type="odd">LICHÁ</button><button data-bet-type="high">19–36</button>
+            <button data-bet-type="dozen" data-bet-value="1">1. TŘETINA</button><button data-bet-type="dozen" data-bet-value="2">2. TŘETINA</button><button data-bet-type="dozen" data-bet-value="3">3. TŘETINA</button>
+            <button data-bet-type="column" data-bet-value="1">I. SLOUPEC</button><button data-bet-type="column" data-bet-value="2">II. SLOUPEC</button><button data-bet-type="column" data-bet-value="3">III. SLOUPEC</button>
+          </div>
+          <div class="chip-rack" id="roulette-chips"><button class="chip selected" data-chip="10">10</button><button class="chip red-chip" data-chip="25">25</button><button class="chip blue-chip" data-chip="100">100</button></div>
+          <div class="roulette-controls"><span>Žeton: <b id="selected-chip">10</b> kr.</span><button class="green-button" data-action="rouletteSpin">ROZTOČIT KOLO</button><button class="text-button" data-action="rouletteClear">Zrušit sázky</button></div>
+        </section>
+        <section class="game-panel blackjack-panel">
+          <div class="panel-heading"><span class="ornament">✦</span><div><h2>Blackjack</h2><p>Krupiér stojí na měkkých 17 • šest balíčků</p></div></div>
+          <div class="blackjack-felt">
+            <div class="hand-area dealer-area"><span class="hand-label">KRUPIÉR <b id="dealer-score">—</b></span><div id="dealer-hand" class="cards"></div></div>
+            <div class="table-inscription">CASINO IMPERIAL</div>
+            <div class="hand-area player-area"><span class="hand-label">VAŠE KARTY <b id="player-score">—</b></span><div id="player-hand" class="cards"></div></div>
+          </div>
+          <div class="blackjack-controls">
+            <label>SÁZKA <div class="stepper"><button data-step="blackjackBet" data-delta="-10">−</button><b id="blackjack-bet">25</b><button data-step="blackjackBet" data-delta="10">+</button></div></label>
+            <button class="gold-button" data-action="deal">ROZDAT</button>
+            <button class="wood-button" data-action="hit" disabled>Další karta</button>
+            <button class="wood-button" data-action="stand" disabled>Stát</button>
+            <button class="wood-button" data-action="double" disabled>Zdvojnásobit</button>
+            <button class="wood-button" data-action="split" disabled>Rozdělit</button>
+            <button class="wood-button" data-action="insurance" hidden>Pojištění</button>
+          </div>
+          <p id="blackjack-message" class="table-message" aria-live="polite">Připraveni na další rozdání?</p>
+        </section>
+      </div>
+      <footer class="casino-footer"><span>♣ Hrajte s rozvahou ♣</span><span>Ruleta 0 • Výplata 35:1 • Blackjack 3:2</span><span>♣ Váš večer, vaše pravidla ♣</span></footer>
+    </section>
+    <section id="city-world" class="world city-world hidden">
+      <div class="section-heading">
+        <div><p class="eyebrow">IMPERIÁLNÍ OBVOD • <span id="city-time">DEN 1</span></p><h1>Město možností</h1></div>
+        <div class="heading-actions"><span class="session-pill">Majetek <b id="net-worth">1 000</b> kr.</span><button class="wood-button" data-action="market">Obchodní pasáž</button></div>
+      </div>
+      <div class="city-layout">
+        <div class="city-map" id="city-map" aria-label="Mapa města Casino Imperial">
+          <div class="road road-horizontal"></div><div class="road road-vertical"></div>
+          <button class="district vip-district" data-district="centrum"><span class="district-icon">♜</span><b>VIP / CENTRUM</b><small>VILY • BANKA • KASINO</small></button>
+          <button class="district rich-district" data-district="bohata"><span class="district-icon">⌂</span><b>BOHATÁ ČTVRŤ</b><small>VILY • LUXUS</small></button>
+          <button class="district middle-district" data-district="stredni"><span class="district-icon">⌂</span><b>STŘEDNÍ ČTVRŤ</b><small>BYTY • RESTAURACE</small></button>
+          <button class="district poor-district" data-district="chudinska"><span class="district-icon">♠</span><b>CHUDINSKÁ ČTVRŤ</b><small>TRH • DOUPĚ LICHVÁŘŮ</small></button>
+          <button class="district industry-district" data-district="prumysl"><span class="district-icon">⚒</span><b>PRŮMYSLOVÁ ZÓNA</b><small>DÍLNY • SKLADY</small></button>
+          <button class="map-building bank-building" data-building="bank"><span>▣</span><b>BANKA</b></button>
+          <button class="map-building jobs-building" data-building="jobs"><span>⚒</span><b>PRACOVNÍ ÚŘAD</b></button>
+          <button class="map-building shark-building" data-building="loanshark" title="Doupě lichvářů"><span>♠</span><b>DOUPĚ</b></button>
+          <button class="map-building casino-building" data-building="casino"><span>♛</span><b>CASINO</b></button>
+          <button class="map-building auction-building" data-building="auction"><span>⚖</span><b>AUKCE</b></button>
+          <span class="map-car" title="Vaše vozidlo">🚘</span><span class="player-pin" title="Vy">◆</span>
+          <div class="map-legend"><span><i></i> Váš majetek</span><span><b>◆</b> Vaše poloha</span></div>
+        </div>
+        <aside class="city-sidebar">
+          <div class="ledger-card"><p class="eyebrow">VÁŠ MAJETEK</p><h2 id="owned-property">Garsónka</h2><div class="ledger-row"><span>Pasivní příjem</span><b id="passive-income">+5 kr./den</b></div><div class="ledger-row"><span>Vozidlo</span><b id="owned-vehicle">Jízdní kolo</b></div><div class="ledger-row"><span>Podnik</span><b id="owned-business">Žádný</b></div><button class="gold-button full-width" data-action="propertyUpgrade">Vylepšit bydlení</button></div>
+          <div class="ledger-card compact-card"><p class="eyebrow">DNEŠNÍ PŘÍLEŽITOSTI</p><button class="list-action" data-action="jobs">⚒ Najít práci <span>›</span></button><button class="list-action" data-action="business">▤ Spravovat podnik <span>›</span></button><button class="list-action" data-action="tax">▣ Městská pokladna <span>›</span></button></div>
+          <div class="city-weather"><span id="day-icon">☀</span><div><b id="day-phase">JASNÝ DEN</b><small>Trh se mění každou směnu</small></div></div>
+        </aside>
+      </div>
+      <div class="city-bottom"><span>⌂ Každý majetek pracuje pro vás. Investujte chytře.</span><button class="text-button" data-action="vehicle">Garáž a vozidla →</button><button class="text-button" data-action="business">Podniky →</button></div>
+    </section>
+  </main>
+  <div id="modal-root" class="modal-root" aria-live="polite"></div>
+  <div id="toast-region" class="toast-region" aria-live="polite"></div>
+  <input id="import-file" type="file" accept="application/json,.json" hidden>
+  <script src="js/utils.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/save.js"></script>
+  <script src="js/casino/slots.js"></script>
+  <script src="js/casino/roulette.js"></script>
+  <script src="js/casino/blackjack.js"></script>
+  <script src="js/city/economy.js"></script>
+  <script src="js/city/properties.js"></script>
+  <script src="js/city/vehicles.js"></script>
+  <script src="js/city/businesses.js"></script>
+  <script src="js/city/bank.js"></script>
+  <script src="js/city/loanshark.js"></script>
+  <script src="js/city/jobs.js"></script>
+  <script src="js/city/map.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

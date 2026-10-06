@@ -1,0 +1,28 @@
+(function(){'use strict';
+  const CI=window.CI,KEY='casinoImperialSave';
+  function normalise(data){
+    if(!data||data.version!==1||!Number.isFinite(data.credits)||data.credits<0||data.credits>1e12)throw new Error('Soubor uložené hry má neplatný formát.');
+    const state=CI.newState(),integer=(value,fallback,min=0,max=1e12)=>Number.isFinite(value)?Math.max(min,Math.min(max,Math.floor(value))):fallback;
+    ['credits','prestige','casinoSpent','casinoWon','spins','rouletteRounds','blackjackRounds'].forEach(k=>state[k]=integer(data[k],state[k]));
+    state.day=integer(data.day,1,1,1e9);state.auctionWeek=integer(data.auctionWeek,-1,-1,1e9);state.lastIncomeAt=integer(data.lastIncomeAt,Date.now(),Date.now()-365*86400000,Date.now());
+    const property=data.property||{};state.property={index:integer(property.index,0,0,5),level:integer(property.level,1,1,10)};
+    state.vehicle=integer(data.vehicle,0,0,7);state.business=data.business===null||data.business===undefined?null:integer(data.business,null,0,6);
+    state.inventory=Array.isArray(data.inventory)?data.inventory.slice(0,200).filter(x=>x&&typeof x.name==='string'&&Number.isFinite(x.price)).map(x=>({name:x.name.slice(0,60),price:integer(x.price,0,0,1e9)})):[];
+    state.slotBet=integer(data.slotBet,10,10,500);state.slotLines=integer(data.slotLines,10,10,20);state.blackjackBet=integer(data.blackjackBet,25,10,1000);state.selectedChip=[10,25,100].includes(data.selectedChip)?data.selectedChip:10;
+    const settings=data.settings||{};state.settings={sound:settings.sound!==false,responsibleLimit:integer(settings.responsibleLimit,5000,100,1000000),cooldownUntil:integer(settings.cooldownUntil,0,0,Date.now()+3600000)};
+    const stats=data.stats||{};['jobs','propertiesBought','businessBought','largestWin'].forEach(k=>state.stats[k]=integer(stats[k],0));
+    state.loans=Array.isArray(data.loans)?data.loans.slice(0,10).filter(l=>l&&Number.isFinite(l.amount)&&Number.isFinite(l.repayment)&&Number.isFinite(l.dueAt)).map(l=>({amount:integer(l.amount,0),repayment:integer(l.repayment,0),dueAt:integer(l.dueAt,0),term:integer(l.term,24,1,720)})):[];
+    if(data.sharkLoan&&Number.isFinite(data.sharkLoan.amount)&&Number.isFinite(data.sharkLoan.dueAt))state.sharkLoan={amount:integer(data.sharkLoan.amount,0),principal:integer(data.sharkLoan.principal,0),startedAt:integer(data.sharkLoan.startedAt,Date.now()),dueAt:integer(data.sharkLoan.dueAt,Date.now()),rate:Math.max(.5,Math.min(1.2,Number(data.sharkLoan.rate)||.5))};
+    const allowedBets=['straight','red','black','even','odd','low','high','dozen','column'];
+    state.bets.roulette=Array.isArray(data.bets?.roulette)?data.bets.roulette.slice(0,20).map(b=>{if(b&&Number.isFinite(b.number))return{type:'straight',value:integer(b.number,0,0,36),amount:[10,25,100].includes(b.amount)?b.amount:10};if(!b||!allowedBets.includes(b.type))return null;return{type:b.type,value:Number.isFinite(b.value)?integer(b.value,0,0,36):null,amount:[10,25,100].includes(b.amount)?b.amount:10};}).filter(Boolean):[];
+    if(data.missions){state.missions={date:String(data.missions.date||''),claimed:Array.isArray(data.missions.claimed)?data.missions.claimed.filter(x=>['spins','work','business','blackjack'].includes(x)):[],base:data.missions.base&&typeof data.missions.base==='object'?{spins:integer(data.missions.base.spins,0),jobs:integer(data.missions.base.jobs,0),businessBought:integer(data.missions.base.businessBought,0),blackjackRounds:integer(data.missions.base.blackjackRounds,0)}:null};}
+    if(data.cashback)state.cashback={dailyDate:String(data.cashback.dailyDate||''),weeklyDate:String(data.cashback.weeklyDate||'')};
+    state.rivals=Array.isArray(data.rivals)?data.rivals.slice(0,10).filter(x=>x&&typeof x.name==='string').map(x=>({name:x.name.slice(0,40),property:String(x.property||'Bydlení').slice(0,40),vehicle:String(x.vehicle||'Vůz').slice(0,40),prestige:integer(x.prestige,0)})):[];
+    return state;
+  }
+  CI.save=()=>{try{CI.state.savedAt=Date.now();localStorage.setItem(KEY,JSON.stringify(CI.state));CI.toast('Postup byl bezpečně uložen.','good');CI.render();}catch(err){CI.toast('Uložení se nezdařilo: '+err.message,'bad');}};
+  CI.loadSave=()=>{try{const raw=localStorage.getItem(KEY);if(!raw)return;CI.state=normalise(JSON.parse(raw));}catch(err){console.error('Uloženou hru nelze načíst:',err);CI.toast('Uloženou hru nelze načíst. Začínáte novou hru.','bad');try{localStorage.removeItem(KEY);}catch(storageError){console.error('Neplatnou uloženou hru nelze odebrat:',storageError);}}};
+  CI.exportSave=()=>{const blob=new Blob([JSON.stringify({game:'Casino Imperial',version:1,player:CI.state},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='casino-imperial-ulozena-hra.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);CI.toast('Záložní soubor byl připraven.','good');};
+  CI.importSave=file=>{if(file.size>1048576){CI.toast('Soubor je příliš velký (maximum 1 MB).','bad');return;}const reader=new FileReader();reader.onload=()=>{try{const parsed=JSON.parse(reader.result),data=parsed.player||parsed;if(parsed.game&&parsed.game!=='Casino Imperial')throw new Error('Soubor nepatří hře Casino Imperial.');CI.state=normalise(data);if(CI.saveSilent()){CI.render();CI.renderRivals();CI.toast('Hra byla úspěšně načtena.','good');}else CI.toast('Hra byla načtena, ale prohlížeč ji nemohl uložit.','bad');}catch(err){CI.toast('Import se nezdařil: '+err.message,'bad');}};reader.onerror=()=>CI.toast('Soubor nelze přečíst.','bad');reader.readAsText(file);};
+  CI.saveSilent=()=>{try{localStorage.setItem(KEY,JSON.stringify(CI.state));return true;}catch(err){console.error('Automatické uložení se nezdařilo:',err);return false;}};
+})();
